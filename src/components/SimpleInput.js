@@ -1,45 +1,33 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 const SimpleInput = (props) => {
   const [enteredName, setEnteredName] = useState("");
-  const [inputIsValid, setInputIsValid] = useState(false);
   const [formIstouched, setFormIsTouched] = useState(false);
-
-  const nameInputRef = useRef();
+  const inputIsValid = enteredName.trim() !== "";
+  const nameInputIsInValid = formIstouched && !inputIsValid;
 
   const nameChangeHandler = (event) => {
     setEnteredName(event.target.value);
-    if (event.target.value.trim() !== "") {
-      setInputIsValid(true);
-    }
   };
 
   const inputBlurHandler = () => {
     setFormIsTouched(true);
-    if (enteredName.trim() === "") {
-      setInputIsValid(false);
-    }
   };
 
   const formSubmitHandler = (event) => {
     event.preventDefault();
     setFormIsTouched(true);
-    if (enteredName.trim() === "") {
-      setInputIsValid(false);
+    if (!inputIsValid) {
       return;
     }
-    setInputIsValid(true);
 
-    console.log("input from reading change with state: " + enteredName);
-    const enteredNameRef = nameInputRef.current.value;
-    console.log("input from reading value with ref: " + enteredNameRef);
+    console.log(enteredName);
 
-    // nameInputRef.current.value = "";
-
-    setEnteredName(" ");
+    setEnteredName("");
+    setFormIsTouched(false);
   };
-  const nameInputIsValid = formIstouched && !inputIsValid;
-  const formClasses = nameInputIsValid
+
+  const formClasses = nameInputIsInValid
     ? "form-control invalid"
     : "form-control";
 
@@ -48,14 +36,13 @@ const SimpleInput = (props) => {
       <div className={formClasses}>
         <label htmlFor="name">Your Name</label>
         <input
-          ref={nameInputRef}
           onChange={nameChangeHandler}
           onBlur={inputBlurHandler}
           value={enteredName}
           type="text"
           id="name"
         />
-        {nameInputIsValid && (
+        {nameInputIsInValid && (
           <p className="error-text">Please enter a valid input</p>
         )}
       </div>
